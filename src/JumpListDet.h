@@ -1,6 +1,7 @@
 #ifndef JUMPLISTDET_H
 #define JUMPLISTDET_H
 
+template<class T>
 class JumpListDet {
     public:
         // Constructor
@@ -11,8 +12,8 @@ class JumpListDet {
 
         void buildPerfectJumpList(int, int);
         int findPredecessor(int);
-        int insert(int);
-        int remove(int);
+        int insert(T);
+        int remove(T);
     private:
 
 
