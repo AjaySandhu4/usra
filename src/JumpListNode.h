@@ -7,6 +7,8 @@ public:
     T *value;
     JumpListNode<T> *next;
     JumpListNode<T> *jump;
+    int nextSize;
+    int jumpSize;
 };
 
 #endif // JUMP_LIST_NODE_H
