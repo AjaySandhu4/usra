@@ -5,17 +5,14 @@ all: main
 main: $(objects)
 	g++ -o main $(objects)
 
-main.o: src/main.cc 
-	g++ -c src/main.cc 
+main.o: src/main.cpp
+	g++ -c src/main.cpp 
 
-# JumpList.o: JumpList.h
-# 	g++ -c JumpList.cc
+JumpListRand.o: src/JumpListRand.cpp src/JumpListRand.h
+	g++ -c src/JumpListRand.cpp
 
-JumpListRand.o: headers/JumpListRand.h
-	g++ -c src/JumpListRand.cc
-
-JumpListDet.o: headers/JumpListDet.h
-	g++ -c src/JumpListDet.cc
+JumpListDet.o: src/JumpListDet.cpp src/JumpListDet.h
+	g++ -c src/JumpListDet.cpp
 
 clean:
 	rm -f main *.o
