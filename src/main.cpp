@@ -8,14 +8,16 @@ void randomJumpListTest(){
 
     JumpListRand<int>* l = new JumpListRand<int>();
 
-    cout << "Finished testing the random Jumplist" << endl;
-
+    for (int i = 1; i < 8; ++i){
+        l->insert(new int(i));
+    }
+    l->print();
     delete l;
+
+    cout << "Finished testing the random Jumplist" << endl;
 }
 
 int main() {
-    cout << "Hello, world! Here is a change I am testing out" << endl;
-
     randomJumpListTest();
 
     return 0;
