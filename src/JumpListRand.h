@@ -25,10 +25,12 @@ class JumpListRand {
 
         int size() const;
         void print() const;
-
-    private:
         JumpListNode<T> *head;
 
+        int listSize;
+    private:
+
+        JumpListNode<T>* insertSearch(T*);
         int index(JumpListNode<T>*) const;
         int index(JumpListNode<T>*, JumpListNode<T>*) const;
         int randomInteger(int, int) const;

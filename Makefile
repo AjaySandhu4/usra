@@ -1,4 +1,4 @@
-objects = main.o JumpListRand.o #JumpListDet.o
+objects = main.o JumpListRand.o JumpListNode.o #JumpListDet.o
 
 all: main
 
@@ -13,6 +13,9 @@ JumpListRand.o: src/JumpListRand.cpp src/JumpListRand.h
 
 # JumpListDet.o: src/JumpListDet.cpp src/JumpListDet.h
 # 	g++ -c src/JumpListDet.cpp
+
+JumpListNode.o: src/JumpListNode.cpp src/JumpListNode.h
+	g++ -c src/JumpListNode.cpp
 
 clean:
 	rm -f main *.o

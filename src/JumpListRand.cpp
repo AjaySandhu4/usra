@@ -1,14 +1,7 @@
 #include "JumpListRand.h"
 
 template<class T>
-JumpListRand<T>::JumpListRand() {
-    head = new JumpListNode<T>();
-    head->value = NULL;
-    head->next = NULL;
-    head->jump = NULL;
-    head->nextSize = 0;
-    head->jumpSize = 0;
-}
+JumpListRand<T>::JumpListRand(): head(new JumpListNode<T>()), listSize(0) {}
 
 template<class T>
 JumpListRand<T>::~JumpListRand(){
@@ -22,13 +15,14 @@ JumpListRand<T>::~JumpListRand(){
 
 template<class T>
 JumpListNode<T>* JumpListRand<T>::buildJumpList(JumpListNode<T>* u, int n){
+    // cout << "Building u="<<*(u->value)<<", n="<<n<<endl;
     if (n == 1) return u;
 
     int k = randomInteger(2, n);
     JumpListNode<T>* p = buildJumpList(u->next, k-1);
     u->jump = p;
-    u->jumpSize = p->nextSize + p->jumpSize + 1;
     u->nextSize = k - 2;
+    // u->jumpSize = n - k + 1;
     JumpListNode<T>* q = buildJumpList(p, n-k+1);
     return q;
 }
@@ -48,9 +42,7 @@ JumpListNode<T>* JumpListRand<T>::search(T* x) const {
 
 template <class T>
 void JumpListRand<T>::insert(T* x){
-    JumpListNode<T>* u = new JumpListNode<T>();
-    u->value = x;
-    insert(u);
+    insert(new JumpListNode<T>(x));
 }
 
 template <class T>
@@ -61,27 +53,51 @@ void JumpListRand<T>::insert(JumpListNode<T>* x){
 
     x->next = u->next;
     u->next = x;
-    setJumpOnInsert(head, x, size());
+    ++listSize;
+    setJumpOnInsert(head, x, listSize+1);
 }
 
 template <class T>
 void JumpListRand<T>::setJumpOnInsert(JumpListNode<T>* u, JumpListNode<T>* x, int n){
+    // cout << "Setting Jump on u="<<*(u->value)<<", x="<<*(x->value)<<", n="<<n<<endl;
     if (u == x) {
         buildJumpList(u, n);
         return;
     }
 
-    bool doReset = randomInteger(1, n) == 1;
+    bool doReset = randomInteger(2, n) == 2;
 
     if (doReset){
+        int i = index(u, x);
         u->jump = x;
-        buildJumpList(u->next, n - index(u, x));
-        buildJumpList(u->jump, n - index(u, x));
+        u->nextSize = i - 1;
+        buildJumpList(u->next, i);
+        buildJumpList(u->jump, n - i);
     } else if (u->jump != NULL && *(u->jump->value) <= *(x->value)){
         setJumpOnInsert(u->jump, x, n - index(u, u->jump));
     } else {
-        setJumpOnInsert(u->next, x, n-1);
+        ++(u->nextSize);
+        setJumpOnInsert(u->next, x, u->nextSize);
     }
+}
+
+template <class T>
+JumpListNode<T>* JumpListRand<T>::insertSearch(T* x) {
+    JumpListNode<T>* u = head;
+
+    while (u->next != NULL){
+        if (u->jump != NULL && *(u->jump->value) <= *x) {
+            ++(u->jumpSize);
+            u = u->jump;
+        }
+        else if (*(u->next->value) <= *x) {
+            ++(u->nextSize);
+            u = u->next;
+        }
+        else return u;
+    }
+
+    return u;
 }
 
 template <class T>
@@ -107,6 +123,7 @@ void JumpListRand<T>::remove(JumpListRand<T>* l, JumpListNode<T>* x){
             u = u->next;
         }
     }
+    --listSize;
 }
 
 template <class T>
@@ -139,7 +156,8 @@ void JumpListRand<T>::print() const {
         if (u != head) cout << *(u->value);
         cout << " -> ";
         if (u->jump != NULL) cout << *(u->jump->value);
-        // cout << "{" << u->jumpSize << "}"; 
+        else cout << "nil";
+        cout << "{" << u->nextSize <<","<<u->jumpSize << "}"; 
         cout << ")";
         prefix = ", ";
         u = u->next;
@@ -149,25 +167,25 @@ void JumpListRand<T>::print() const {
 
 template <class T>
 int JumpListRand<T>::size() const {
-    int n = 0;
-    JumpListNode<T>* u = head->next;
-    while (u != NULL){
-        ++n;
-        u = u->next;
-    }
-    return n;
+    // int n = 0;
+    // JumpListNode<T>* u = head->next;
+    // while (u != NULL){
+    //     ++n;
+    //     u = u->next;
+    // }
+    // return n;
     // return head->nextSize + head->jumpSize + 1;
+    return listSize;
 }
 
 template <class T>
 int JumpListRand<T>::index(JumpListNode<T>* x) const {
-    return index(head->next, x);
+    return index(head, x);
 }
 
 template <class T>
 int JumpListRand<T>::index(JumpListNode<T>* u, JumpListNode<T>* x) const {
     int i = 0;
-    if (u == head) --i;
     while (u != NULL && u != x){
         u = u->next;
         ++i;
